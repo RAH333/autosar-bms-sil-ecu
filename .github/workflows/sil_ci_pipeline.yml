@@ -1,0 +1,30 @@
+name: AUTOSAR SIL Build & Verification CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-sil-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -B build -S .
+
+      - name: Build Embedded C ECU Target
+        run: cmake --build build
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Execute Automated SIL Test Suite
+        run: python3 sil_tests/test_bms_sil.py
+        
